@@ -29,8 +29,12 @@ src/dit/diffusion.py  linear beta schedule, q_sample, learn-sigma VLB loss, DDPM
 src/dit/ema.py        EMA of trainable parameters
 src/dit/train.py      AdamW, bf16 autocast, grad clip, checkpoint-resume, DDP via torchrun
 src/dit/data.py       CIFAR-10 loader and a fake dataset for smoke tests
+kaggle/run_pilot.py   throughput pilot on 2x T4: img/s and peak memory per config and precision, sampler timing
+scripts/run_on_kaggle.py  pushes src as a Kaggle dataset, runs a kaggle/ script as a GPU kernel, pulls results/
 tests/                27 tests, CPU only
 ```
+
+Precision: `--precision auto` uses bf16 where the GPU supports it (A100) and fp16 with a gradient scaler otherwise (T4).
 
 ## Run
 

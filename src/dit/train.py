@@ -41,7 +41,8 @@ def parse_args(argv=None):
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--no-learn-sigma", action="store_true")
-    p.add_argument("--no-amp", action="store_true")
+    p.add_argument("--precision", default="auto", choices=["auto", "bf16", "fp16", "fp32"], help="auto: bf16 if the GPU supports it, else fp16")
+    p.add_argument("--no-amp", action="store_true", help="same as --precision fp32")
     p.add_argument("--resume", default=None, help="checkpoint path; default: latest in --out")
     return p.parse_args(argv)
 
@@ -61,9 +62,9 @@ def latest_checkpoint(out):
     return cks[-1] if cks else None
 
 
-def save_checkpoint(out, step, model, ema, opt, args, keep):
+def save_checkpoint(out, step, model, ema, opt, scaler, args, keep):
     path = Path(out) / f"step_{step:07d}.pt"
-    torch.save(dict(step=step, model=model.state_dict(), ema=ema.state_dict(), opt=opt.state_dict(), args=vars(args)), path)
+    torch.save(dict(step=step, model=model.state_dict(), ema=ema.state_dict(), opt=opt.state_dict(), scaler=scaler.state_dict(), args=vars(args)), path)
     cks = sorted(Path(out).glob("step_*.pt"), key=lambda p: int(p.stem.split("_")[1]))
     for old in cks[:-keep]:
         old.unlink()
@@ -88,6 +89,7 @@ def main(argv=None):
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0, betas=(0.9, 0.999))
 
     step = 0
+    sd = {}
     ck = Path(args.resume) if args.resume else latest_checkpoint(out)
     if ck is not None and ck.exists():
         sd = torch.load(ck, map_location=device)
@@ -108,13 +110,20 @@ def main(argv=None):
     sampler = DistributedSampler(ds, num_replicas=world, rank=rank, shuffle=True, seed=args.seed) if world > 1 else None
     loader = DataLoader(ds, batch_size=micro, shuffle=sampler is None, sampler=sampler, num_workers=args.workers, drop_last=True, pin_memory=device.type == "cuda", persistent_workers=args.workers > 0)
 
-    use_amp = device.type == "cuda" and not args.no_amp
+    precision = "fp32" if args.no_amp or device.type != "cuda" else args.precision
+    if precision == "auto":
+        precision = "bf16" if torch.cuda.is_bf16_supported() else "fp16"
+    use_amp = precision != "fp32"
+    amp_dtype = torch.bfloat16 if precision == "bf16" else torch.float16
+    scaler = torch.cuda.amp.GradScaler(enabled=precision == "fp16")
+    if ck is not None and ck.exists() and "scaler" in sd:
+        scaler.load_state_dict(sd["scaler"])
     log_path = out / "train_log.csv"
     if is_main:
-        print(f"{args.model}: {count_params(model)/1e6:.1f}M params, world={world}, micro-batch={micro}, amp={use_amp}")
+        print(f"{args.model}: {count_params(model)/1e6:.1f}M params, world={world}, micro-batch={micro}, precision={precision}")
         (out / "config.json").write_text(json.dumps(vars(args), indent=2))
         if not log_path.exists():
-            log_path.write_text("step,loss,mse,vb,img_per_s,lr\n")
+            log_path.write_text("step,loss,mse,vb,img_per_s,peak_mem_gb,lr\n")
 
     model.train()
     epoch = 0
@@ -135,30 +144,33 @@ def main(argv=None):
                     break
                 x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
                 t = torch.randint(0, diffusion.timesteps, (x.shape[0],), device=device)
-                with torch.autocast("cuda", dtype=torch.bfloat16, enabled=use_amp):
+                with torch.autocast("cuda", dtype=amp_dtype, enabled=use_amp):
                     terms = diffusion.training_losses(ddp_model, x, t, dict(y=y))
                 loss = terms["loss"].mean() / args.accum
-                loss.backward()
+                scaler.scale(loss).backward()
                 running["loss"] += terms["loss"].mean().item()
                 running["mse"] += terms["mse"].mean().item()
                 running["vb"] += terms["vb"].mean().item() if "vb" in terms else 0.0
                 running["n"] += 1
                 seen += x.shape[0] * world
             else:
+                scaler.unscale_(opt)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip)
-                opt.step()
+                scaler.step(opt)
+                scaler.update()
                 ema.update(model)
                 step += 1
                 if is_main and step % args.log_every == 0:
                     n = max(running["n"], 1)
                     ips = seen / (time.time() - t0)
+                    mem = torch.cuda.max_memory_allocated(device) / 2**30 if device.type == "cuda" else 0.0
                     with open(log_path, "a") as f:
-                        csv.writer(f).writerow([step, running["loss"] / n, running["mse"] / n, running["vb"] / n, f"{ips:.1f}", args.lr])
-                    print(f"step {step} loss {running['loss']/n:.4f} mse {running['mse']/n:.4f} vb {running['vb']/n:.4f} {ips:.1f} img/s")
+                        csv.writer(f).writerow([step, running["loss"] / n, running["mse"] / n, running["vb"] / n, f"{ips:.1f}", f"{mem:.2f}", args.lr])
+                    print(f"step {step} loss {running['loss']/n:.4f} mse {running['mse']/n:.4f} vb {running['vb']/n:.4f} {ips:.1f} img/s {mem:.2f} GB")
                     running = dict(loss=0.0, mse=0.0, vb=0.0, n=0)
                     t0, seen = time.time(), 0
                 if is_main and (step % args.ckpt_every == 0 or step == args.steps):
-                    save_checkpoint(out, step, model, ema, opt, args, args.keep)
+                    save_checkpoint(out, step, model, ema, opt, scaler, args, args.keep)
                 if step >= args.steps:
                     done = True
                 continue
