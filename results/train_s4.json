@@ -1,0 +1,18 @@
+{
+  "config": {
+    "run": "s4",
+    "model": "DiT-S/4",
+    "gpus": 1,
+    "steps": 100000,
+    "batch": 128,
+    "precision": "fp16",
+    "max_hours": 10.5,
+    "ckpt_every": 5000
+  },
+  "start_step": 0,
+  "end_step": 100000,
+  "finished": true,
+  "exit_code": 0,
+  "session_hours": 4.72,
+  "checkpoint": "step_0100000.pt"
+}
