@@ -114,7 +114,8 @@ def pull(kid: str) -> None:
     out = ROOT / "kaggle" / "out"
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
-    print(kaggle("kernels", "output", kid, "-p", str(out)).strip().splitlines()[-1])
+    # checkpoints (hundreds of MB) stay on Kaggle; the resume and eval kernels read them there
+    print(kaggle("kernels", "output", kid, "-p", str(out), "--file-pattern", r".*\.(json|csv|png|md|log)$").strip().splitlines()[-1])
     results = ROOT / "results"
     results.mkdir(exist_ok=True)
     for f in out.rglob("*"):

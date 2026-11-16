@@ -1,61 +1,58 @@
-  -> exit 0 in 5 s
+  -> exit 0 in 3 s
 checkpoint: /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt
 $ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddpm --steps 1000 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddpm1000_cfg1.0.npz
-  -> exit 0 in 3841 s
+  -> exit 0 in 3827 s
 $ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddpm1000_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddpm1000_cfg1.0.json
-  -> exit 1 in 2276 s
-The repository chenyaofo_pytorch-cifar-models does not belong to the list of trusted repositories and as such cannot be downloaded. Do you trust this repository and wish to add it to the trusted list of repositories (y/N)? /170M [31:17<00:04, 111kB/s]
-100%|█████████▉| 170M/170M [31:17<00:03, 113kB/s]
-100%|█████████▉| 170M/170M [31:18<00:03, 115kB/s]
-100%|█████████▉| 170M/170M [31:18<00:03, 115kB/s]
-100%|█████████▉| 170M/170M [31:18<00:02, 115kB/s]
-100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
-100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
-100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
-100%|█████████▉| 170M/170M [31:19<00:01, 115kB/s]
-100%|█████████▉| 170M/170M [31:20<00:01, 107kB/s]
-100%|█████████▉| 170M/170M [31:20<00:01, 109kB/s]
-100%|█████████▉| 170M/170M [31:20<00:00, 110kB/s]
-100%|█████████▉| 170M/170M [31:21<00:00, 111kB/s]
-100%|█████████▉| 170M/170M [31:21<00:00, 112kB/s]
-100%|█████████▉| 170M/170M [31:21<00:00, 113kB/s]
-100%|██████████| 170M/170M [31:21<00:00, 90.6kB/s]
-Downloading: "https://github.com/toshas/torch-fidelity/releases/download/v0.2.0/weights-inception-2015-12-05-6726825d.pth" to /root/.cache/torch/hub/checkpoints/weights-inception-2015-12-05-6726825d.pth
-Downloading: "https://download.pytorch.org/models/vgg16-397923af.pth" to /root/.cache/torch/hub/checkpoints/vgg16-397923af.pth
-Traceback (most recent call last):
-  File "<frozen runpy>", line 203, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 145, in <module>
-    main()
-    ~~~~^^
-  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 128, in main
-    result["class_accuracy"] = class_accuracy(samples, labels, device)
-                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
-    return func(*args, **kwargs)
-  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 64, in class_accuracy
-    clf = load_classifier(device)
-  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 58, in load_classifier
-    model = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True, verbose=False)
-  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 661, in load
-    repo_or_dir = _get_cache_or_reload(
-        repo_or_dir,
-    ...<3 lines>...
-        skip_validation=skip_validation,
-    )
-  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 291, in _get_cache_or_reload
-    _check_repo_is_trusted(
-    ~~~~~~~~~~~~~~~~~~~~~~^
-        repo_owner,
-        ^^^^^^^^^^^
-    ...<2 lines>...
-        trust_repo=trust_repo,
-        ^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 376, in _check_repo_is_trusted
-    response = input(
-        f"The repository {owner_name} does not belong to the list of trusted repositories and as such cannot be downloaded. "
-        "Do you trust this repository and wish to add it to the trusted list of repositories (y/N)?"
-    )
-EOFError: EOF when reading a line
+  -> exit 0 in 2018 s
+{"fid": 31.555634520042304, "inception_score": 6.73799813753501, "precision": 0.8009999990463257, "recall": 0.27320000529289246, "s_per_img": 0.3811425552368164, "setting": "s4_ddpm1000_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 250 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim250_cfg1.0.npz
+  -> exit 0 in 961 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim250_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim250_cfg1.0.json
+  -> exit 0 in 134 s
+{"fid": 33.609327488328745, "inception_score": 6.745342500151393, "precision": 0.7839999794960022, "recall": 0.2768000066280365, "s_per_img": 0.09558891113180863, "setting": "s4_ddim250_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim50_cfg1.0.npz
+  -> exit 0 in 197 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim50_cfg1.0.json
+  -> exit 0 in 134 s
+{"fid": 37.03640860383683, "inception_score": 6.62403408825737, "precision": 0.8241999745368958, "recall": 0.2224999964237213, "s_per_img": 0.019212742880771034, "setting": "s4_ddim50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim10_cfg1.0.npz
+  -> exit 0 in 45 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim10_cfg1.0.json
+  -> exit 0 in 133 s
+{"fid": 50.95664752646945, "inception_score": 6.330274504315402, "precision": 0.9405999779701233, "recall": 0.05510000139474869, "s_per_img": 0.003972527855320981, "setting": "s4_ddim10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim4_cfg1.0.npz
+  -> exit 0 in 21 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim4_cfg1.0.json
+  -> exit 0 in 134 s
+{"fid": 100.72598888376041, "inception_score": 4.9234495922867145, "precision": 0.992900013923645, "recall": 0.00039999998989515007, "s_per_img": 0.0015669296164261667, "setting": "s4_ddim4_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler dpmpp --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_dpmpp50_cfg1.0.npz
+  -> exit 0 in 206 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_dpmpp50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_dpmpp50_cfg1.0.json
+  -> exit 0 in 134 s
+{"fid": 37.82511179027023, "inception_score": 6.653224763786556, "precision": 0.7804999947547913, "recall": 0.26510000228881836, "s_per_img": 0.019111386675583687, "setting": "s4_dpmpp50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler dpmpp --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_dpmpp10_cfg1.0.npz
+  -> exit 0 in 49 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_dpmpp10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_dpmpp10_cfg1.0.json
+  -> exit 0 in 132 s
+{"fid": 44.6464404549842, "inception_score": 6.564181344006033, "precision": 0.8823000192642212, "recall": 0.10909999907016754, "s_per_img": 0.003941568525213945, "setting": "s4_dpmpp10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler dpmpp --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_dpmpp4_cfg1.0.npz
+  -> exit 0 in 25 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_dpmpp4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_dpmpp4_cfg1.0.json
+  -> exit 0 in 133 s
+{"fid": 73.15088505600414, "inception_score": 5.466046404395465, "precision": 0.9847999811172485, "recall": 0.003700000001117587, "s_per_img": 0.001550982676054302, "setting": "s4_dpmpp4_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 50 --cfg 1.5 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim50_cfg1.5.npz
+  -> exit 0 in 383 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim50_cfg1.5.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim50_cfg1.5.json
+  -> exit 0 in 133 s
+{"fid": 29.197140146557217, "inception_score": 7.382957439278239, "precision": 0.8324999809265137, "recall": 0.23440000414848328, "s_per_img": 0.03772888866223787, "setting": "s4_ddim50_cfg1.5"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 50 --cfg 2.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim50_cfg2.0.npz
+  -> exit 0 in 383 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim50_cfg2.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim50_cfg2.0.json
+  -> exit 0 in 134 s
+{"fid": 25.90625106301826, "inception_score": 7.865547005591438, "precision": 0.8493000268936157, "recall": 0.2150000035762787, "s_per_img": 0.037709126246602914, "setting": "s4_ddim50_cfg2.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddim --steps 50 --cfg 4.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddim50_cfg4.0.npz
+  -> exit 0 in 383 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddim50_cfg4.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddim50_cfg4.0.json
+  -> exit 0 in 134 s
+{"fid": 33.40075481656618, "inception_score": 8.244801923202306, "precision": 0.8416000008583069, "recall": 0.10130000114440918, "s_per_img": 0.03768847578450253, "setting": "s4_ddim50_cfg4.0"}
+done in 164.0 min
