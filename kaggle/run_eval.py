@@ -5,7 +5,8 @@ the training kernel's output so the EMA checkpoint is under /kaggle/input.
 For each (sampler, steps) setting: generate N class-balanced images, record seconds per image,
 compute FID / IS / precision / recall against CIFAR-10 train statistics, class accuracy under a
 pretrained ResNet-56, and the memorisation check. Writes /kaggle/working/results/eval_<run>.json
-plus a 10x10 sample grid per setting.
+plus a 10x10 sample grid per setting. Sample sets (about 29 MB each) stay in the output so a
+re-run after a failure skips the sampling.
 """
 
 import glob
@@ -51,8 +52,22 @@ def grid(npz, png):
     Image.fromarray(np.concatenate(rows, axis=0)).save(png)
 
 
+def restore_previous():
+    """Reuse a previous version's output: CIFAR-10 archive, feature cache, finished sample sets."""
+    import shutil
+
+    roots = {Path(p).parents[1] for p in glob.glob("/kaggle/input/**/samples/*.npz", recursive=True)} | {Path(p).parents[1] for p in glob.glob("/kaggle/input/**/cache/*.pt", recursive=True)}
+    for root in roots:
+        for sub in ("data", "cache", "samples"):
+            src = root / sub
+            if src.is_dir():
+                shutil.copytree(src, WORK / sub, dirs_exist_ok=True)
+                print(f"restored {sub}/ from {root}", flush=True)
+
+
 def main():
     t_all = time.time()
+    restore_previous()
     sh([PY, "-m", "pip", "install", "-q", "torch-fidelity", "diffusers"])
     ckpt = None
     if not CONFIG["unet"]:
@@ -71,14 +86,14 @@ def main():
     for sampler, steps, cfg in jobs:
         name = f"{tag}_{sampler}{steps}_cfg{cfg}"
         npz = SAMPLES / f"{name}.npz"
-        sh([PY, "-m", "dit.sample", *source, "--sampler", sampler, "--steps", steps, "--cfg", cfg, "--n", CONFIG["n"], "--batch", 500, "--out", npz])
+        if not npz.exists():
+            sh([PY, "-m", "dit.sample", *source, "--sampler", sampler, "--steps", steps, "--cfg", cfg, "--n", CONFIG["n"], "--batch", 500, "--out", npz])
         out = RES / f"eval_{name}.json"
         sh([PY, "-m", "dit.evaluate", npz, "--data", DATA, "--cache", CACHE, "--out", out])
         rec = json.loads(out.read_text())
         grid(npz, FIG / f"{name}.png")
         results.append(rec)
         print(json.dumps({k: rec[k] for k in ("fid", "inception_score", "precision", "recall")} | {"s_per_img": rec["meta"]["seconds_per_image"], "setting": name}), flush=True)
-        npz.unlink()  # keep the output under Kaggle's size limit
 
     summary = dict(config=CONFIG, checkpoint=ckpt, results=results, total_minutes=round((time.time() - t_all) / 60, 1))
     (RES / f"eval_{tag}.json").write_text(json.dumps(summary, indent=2))

@@ -35,14 +35,23 @@ def cifar_uint8(root, train=True):
     return ds.data, np.asarray(ds.targets)
 
 
-def fidelity_metrics(samples, real, cache_dir, cache_name="cifar10-train", kid=False):
+def fidelity_metrics(samples, real, cache_dir, prc_subset=10_000, seed=0):
+    """FID and IS against the full real set; precision/recall against a fixed random subset of
+    prc_subset real images (equal-size sets as in Kynkaanniemi et al.), because torch-fidelity's
+    k-NN radii need an N x N distance matrix over the real set."""
     import torch_fidelity
 
-    return torch_fidelity.calculate_metrics(
-        input1=Uint8Images(samples), input2=Uint8Images(real), cuda=torch.cuda.is_available(),
-        isc=True, fid=True, kid=kid, prc=True, prc_neighborhood=3,
-        input2_cache_name=cache_name, cache_root=str(cache_dir), verbose=False,
+    cuda = torch.cuda.is_available()
+    m = torch_fidelity.calculate_metrics(
+        input1=Uint8Images(samples), input2=Uint8Images(real), cuda=cuda, isc=True, fid=True,
+        input2_cache_name=f"cifar10-train", cache_root=str(cache_dir), verbose=False,
     )
+    idx = np.sort(np.random.default_rng(seed).choice(len(real), min(prc_subset, len(real)), replace=False))
+    m.update(torch_fidelity.calculate_metrics(
+        input1=Uint8Images(samples), input2=Uint8Images(real[idx]), cuda=cuda, prc=True, prc_neighborhood=3,
+        input2_cache_name=f"cifar10-train-prc{len(idx)}-seed{seed}", cache_root=str(cache_dir), verbose=False,
+    ))
+    return m
 
 
 def load_classifier(device):
@@ -105,6 +114,7 @@ def main(argv=None):
     p.add_argument("--cache", default="cache")
     p.add_argument("--out", required=True)
     p.add_argument("--no-memorisation", action="store_true")
+    p.add_argument("--prc-subset", type=int, default=10_000)
     a = p.parse_args(argv)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     z = np.load(a.samples)
@@ -112,8 +122,8 @@ def main(argv=None):
     train, _ = cifar_uint8(a.data, train=True)
     Path(a.cache).mkdir(parents=True, exist_ok=True)
 
-    m = fidelity_metrics(samples, train, a.cache)
-    result = dict(meta=meta, fid=m["frechet_inception_distance"], inception_score=m["inception_score_mean"], inception_score_std=m["inception_score_std"], precision=m["precision"], recall=m["recall"], f_score=m["f_score"])
+    m = fidelity_metrics(samples, train, a.cache, prc_subset=a.prc_subset)
+    result = dict(meta=meta, fid=m["frechet_inception_distance"], inception_score=m["inception_score_mean"], inception_score_std=m["inception_score_std"], precision=m["precision"], recall=m["recall"], f_score=m["f_score"], prc_real_subset=a.prc_subset)
     if meta.get("model") != "ddpm-cifar10-32-unet":
         result["class_accuracy"] = class_accuracy(samples, labels, device)
     if not a.no_memorisation:

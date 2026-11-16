@@ -80,6 +80,8 @@ def push_kernel(user: str, src_slug: str, experiment: str, run: str = "") -> str
             cfg = {**default_cfg, "run": run, "unet": run == "unet"}
             if run != "unet":
                 sources = [f"{user}/{PROJECT}-train-{run}"]
+            if kernel_exists(kid):
+                sources.append(kid)  # previous version's samples and feature cache
         else:
             cfg = None
         if cfg is not None:
