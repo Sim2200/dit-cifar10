@@ -23,3 +23,10 @@ def test_grad_accumulation_matches_global_batch(tmp_path):
     out = tmp_path / "acc"
     train.main(["--model", "DiT-S/4", "--fake-data", "--out", str(out), "--steps", "1", "--batch", "8", "--accum", "2", "--workers", "0", "--log-every", "1"])
     assert train.latest_checkpoint(out).name == "step_0000001.pt"
+
+
+def test_max_hours_saves_and_exits(tmp_path):
+    out = tmp_path / "wall"
+    train.main(["--model", "DiT-S/4", "--fake-data", "--out", str(out), "--steps", "1000", "--batch", "8", "--workers", "0", "--log-every", "1", "--max-hours", "1e-9"])
+    ck = train.latest_checkpoint(out)
+    assert ck is not None and ck.name == "step_0000001.pt"

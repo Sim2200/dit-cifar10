@@ -44,6 +44,7 @@ def parse_args(argv=None):
     p.add_argument("--precision", default="auto", choices=["auto", "bf16", "fp16", "fp32"], help="auto: bf16 if the GPU supports it, else fp16")
     p.add_argument("--no-amp", action="store_true", help="same as --precision fp32")
     p.add_argument("--resume", default=None, help="checkpoint path; default: latest in --out")
+    p.add_argument("--max-hours", type=float, default=0, help="save a checkpoint and exit cleanly after this much wall time (0 = no limit)")
     return p.parse_args(argv)
 
 
@@ -127,6 +128,7 @@ def main(argv=None):
 
     model.train()
     epoch = 0
+    t_start = time.time()
     t0 = time.time()
     seen = 0
     running = dict(loss=0.0, mse=0.0, vb=0.0, n=0)
@@ -169,9 +171,16 @@ def main(argv=None):
                     print(f"step {step} loss {running['loss']/n:.4f} mse {running['mse']/n:.4f} vb {running['vb']/n:.4f} {ips:.1f} img/s {mem:.2f} GB")
                     running = dict(loss=0.0, mse=0.0, vb=0.0, n=0)
                     t0, seen = time.time(), 0
-                if is_main and (step % args.ckpt_every == 0 or step == args.steps):
+                out_of_time = args.max_hours > 0 and (time.time() - t_start) > args.max_hours * 3600
+                if world > 1:
+                    flag = torch.tensor([int(out_of_time)], device=device)
+                    dist.broadcast(flag, src=0)
+                    out_of_time = bool(flag.item())
+                if is_main and (step % args.ckpt_every == 0 or step == args.steps or out_of_time):
                     save_checkpoint(out, step, model, ema, opt, scaler, args, args.keep)
-                if step >= args.steps:
+                if step >= args.steps or out_of_time:
+                    if out_of_time and is_main:
+                        print(f"wall-clock limit reached at step {step}; checkpoint saved, resume to continue")
                     done = True
                 continue
             break
