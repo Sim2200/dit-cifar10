@@ -8,6 +8,8 @@
     python scripts/run_on_kaggle.py --user simrankharbanda22 --experiment pilot
     python scripts/run_on_kaggle.py --user simrankharbanda22 --experiment pilot --pull-only
     python scripts/run_on_kaggle.py --user simran2200 --experiment train --run s4   # re-run to resume
+    python scripts/run_on_kaggle.py --user simran2200 --experiment eval --run s4    # attaches the train kernel's output
+    python scripts/run_on_kaggle.py --user simran2200 --experiment eval --run unet  # pretrained DDPM U-Net baseline
 Account selection: KAGGLE_API_TOKEN=$(cat ~/.kaggle-2/access_token) for the second account.
 """
 
@@ -26,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 KAGGLE = [sys.executable, "-m", "kaggle"]
 PROJECT = "dit-cifar10"
 
-EXPERIMENTS = {"pilot": "run_pilot.py", "train": "run_train.py"}
+EXPERIMENTS = {"pilot": "run_pilot.py", "train": "run_train.py", "eval": "run_eval.py"}
 
 TRAIN_RUNS = {  # run -> settings; gpus and hours from results/pilot.json
     "s4": dict(model="DiT-S/4", gpus=1, steps=100_000, batch=128, precision="fp16", max_hours=10.5, ckpt_every=5000),
@@ -66,13 +68,22 @@ def push_kernel(user: str, src_slug: str, experiment: str, run: str = "") -> str
     with tempfile.TemporaryDirectory() as tmp:
         d = Path(tmp)
         text = (ROOT / "kaggle" / script).read_text()
-        if run:
+        head, _, rest = text.partition("\nCONFIG = ")
+        default_cfg = json.loads(rest[: rest.index("\n")])
+        sources = []
+        if experiment == "train":
             cfg = dict(run=run, **TRAIN_RUNS[run])
-            head, _, rest = text.partition("\nCONFIG = ")
+            # a previous version's output holds the checkpoint to resume from
+            sources = [kid] if kernel_exists(kid) else []
+        elif experiment == "eval":
+            cfg = {**default_cfg, "run": run, "unet": run == "unet"}
+            if run != "unet":
+                sources = [f"{user}/{PROJECT}-train-{run}"]
+        else:
+            cfg = None
+        if cfg is not None:
             text = head + "\nCONFIG = " + json.dumps(cfg) + rest[rest.index("\n"):]
         (d / script).write_text(text)
-        # a previous version's output holds the checkpoint to resume from
-        sources = [kid] if run and kernel_exists(kid) else []
         (d / "kernel-metadata.json").write_text(json.dumps({
             "id": kid, "title": kid.split("/")[1], "code_file": script, "language": "python",
             "kernel_type": "script", "is_private": True, "enable_gpu": True, "enable_internet": True,
@@ -126,12 +137,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--user", required=True)
     ap.add_argument("--experiment", default="pilot", choices=sorted(EXPERIMENTS))
-    ap.add_argument("--run", default="", choices=["", *TRAIN_RUNS], help="for --experiment train")
+    ap.add_argument("--run", default="", choices=["", *TRAIN_RUNS, "unet"], help="train: which run; eval: which run's checkpoint, or unet for the baseline")
     ap.add_argument("--pull-only", action="store_true")
     ap.add_argument("--no-wait", action="store_true", help="push and return without polling")
     a = ap.parse_args()
-    if a.experiment == "train" and not a.run:
-        raise SystemExit("--experiment train needs --run")
+    if a.experiment in ("train", "eval") and not a.run:
+        raise SystemExit(f"--experiment {a.experiment} needs --run")
     kid = f"{a.user}/{PROJECT}-{a.experiment}" + (f"-{a.run}" if a.run else "")
     if not a.pull_only:
         slug = push_source(a.user)
