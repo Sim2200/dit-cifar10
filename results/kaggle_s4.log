@@ -1,61 +1,61 @@
-  -> exit 0 in 6 s
+  -> exit 0 in 5 s
 checkpoint: /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt
 $ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simran2200/dit-cifar10-train-s4/checkpoints/s4/step_0100000.pt --sampler ddpm --steps 1000 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s4_ddpm1000_cfg1.0.npz
-  -> exit 0 in 4419 s
+  -> exit 0 in 3841 s
 $ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s4_ddpm1000_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s4_ddpm1000_cfg1.0.json
-  -> exit -9 in 3068 s
- 8:13<00:17, 93.4kB/s]
- 99%|█████████▉| 169M/170M [38:13<00:18, 90.9kB/s]
- 99%|█████████▉| 169M/170M [38:14<00:18, 89.5kB/s]
- 99%|█████████▉| 169M/170M [38:14<00:17, 88.5kB/s]
- 99%|█████████▉| 169M/170M [38:14<00:18, 82.0kB/s]
- 99%|█████████▉| 169M/170M [38:15<00:19, 77.3kB/s]
- 99%|█████████▉| 169M/170M [38:15<00:17, 85.5kB/s]
- 99%|█████████▉| 169M/170M [38:16<00:19, 75.9kB/s]
- 99%|█████████▉| 169M/170M [38:16<00:15, 90.4kB/s]
- 99%|█████████▉| 169M/170M [38:16<00:16, 83.4kB/s]
- 99%|█████████▉| 169M/170M [38:17<00:14, 90.1kB/s]
- 99%|█████████▉| 169M/170M [38:17<00:14, 89.9kB/s]
- 99%|█████████▉| 169M/170M [38:17<00:14, 89.3kB/s]
- 99%|█████████▉| 169M/170M [38:18<00:14, 88.8kB/s]
- 99%|█████████▉| 169M/170M [38:18<00:13, 88.5kB/s]
- 99%|█████████▉| 169M/170M [38:19<00:15, 77.4kB/s]
- 99%|█████████▉| 169M/170M [38:19<00:13, 84.9kB/s]
- 99%|█████████▉| 169M/170M [38:19<00:13, 86.1kB/s]
- 99%|█████████▉| 169M/170M [38:20<00:13, 81.4kB/s]
- 99%|█████████▉| 169M/170M [38:20<00:13, 77.6kB/s]
- 99%|█████████▉| 169M/170M [38:21<00:11, 85.9kB/s]
- 99%|█████████▉| 170M/170M [38:21<00:10, 93.3kB/s]
- 99%|█████████▉| 170M/170M [38:21<00:09, 95.9kB/s]
- 99%|█████████▉| 170M/170M [38:22<00:09, 94.6kB/s]
- 99%|█████████▉| 170M/170M [38:22<00:09, 93.9kB/s]
- 99%|█████████▉| 170M/170M [38:22<00:09, 93.5kB/s]
-100%|█████████▉| 170M/170M [38:23<00:10, 81.0kB/s]
-100%|█████████▉| 170M/170M [38:23<00:09, 87.9kB/s]
-100%|█████████▉| 170M/170M [38:23<00:08, 88.5kB/s]
-100%|█████████▉| 170M/170M [38:24<00:07, 94.4kB/s]
-100%|█████████▉| 170M/170M [38:24<00:07, 94.4kB/s]
-100%|█████████▉| 170M/170M [38:24<00:06, 94.6kB/s]
-100%|█████████▉| 170M/170M [38:25<00:06, 94.8kB/s]
-100%|█████████▉| 170M/170M [38:25<00:06, 95.0kB/s]
-100%|█████████▉| 170M/170M [38:25<00:05, 95.2kB/s]
-100%|█████████▉| 170M/170M [38:26<00:05, 94.5kB/s]
-100%|█████████▉| 170M/170M [38:27<00:06, 73.1kB/s]
-100%|█████████▉| 170M/170M [38:27<00:06, 67.7kB/s]
-100%|█████████▉| 170M/170M [38:27<00:06, 71.9kB/s]
-100%|█████████▉| 170M/170M [38:28<00:04, 80.7kB/s]
-100%|█████████▉| 170M/170M [38:28<00:04, 89.3kB/s]
-100%|█████████▉| 170M/170M [38:28<00:03, 103kB/s]
-100%|█████████▉| 170M/170M [38:28<00:02, 118kB/s]
-100%|█████████▉| 170M/170M [38:29<00:02, 126kB/s]
-100%|█████████▉| 170M/170M [38:29<00:02, 115kB/s]
-100%|█████████▉| 170M/170M [38:30<00:02, 84.2kB/s]
-100%|█████████▉| 170M/170M [38:30<00:02, 78.3kB/s]
-100%|█████████▉| 170M/170M [38:30<00:01, 81.1kB/s]
-100%|█████████▉| 170M/170M [38:31<00:01, 95.3kB/s]
-100%|█████████▉| 170M/170M [38:31<00:00, 102kB/s]
-100%|█████████▉| 170M/170M [38:31<00:00, 114kB/s]
-100%|█████████▉| 170M/170M [38:32<00:00, 98.3kB/s]
-100%|██████████| 170M/170M [38:32<00:00, 73.7kB/s]
+  -> exit 1 in 2276 s
+The repository chenyaofo_pytorch-cifar-models does not belong to the list of trusted repositories and as such cannot be downloaded. Do you trust this repository and wish to add it to the trusted list of repositories (y/N)? /170M [31:17<00:04, 111kB/s]
+100%|█████████▉| 170M/170M [31:17<00:03, 113kB/s]
+100%|█████████▉| 170M/170M [31:18<00:03, 115kB/s]
+100%|█████████▉| 170M/170M [31:18<00:03, 115kB/s]
+100%|█████████▉| 170M/170M [31:18<00:02, 115kB/s]
+100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
+100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
+100%|█████████▉| 170M/170M [31:19<00:02, 115kB/s]
+100%|█████████▉| 170M/170M [31:19<00:01, 115kB/s]
+100%|█████████▉| 170M/170M [31:20<00:01, 107kB/s]
+100%|█████████▉| 170M/170M [31:20<00:01, 109kB/s]
+100%|█████████▉| 170M/170M [31:20<00:00, 110kB/s]
+100%|█████████▉| 170M/170M [31:21<00:00, 111kB/s]
+100%|█████████▉| 170M/170M [31:21<00:00, 112kB/s]
+100%|█████████▉| 170M/170M [31:21<00:00, 113kB/s]
+100%|██████████| 170M/170M [31:21<00:00, 90.6kB/s]
 Downloading: "https://github.com/toshas/torch-fidelity/releases/download/v0.2.0/weights-inception-2015-12-05-6726825d.pth" to /root/.cache/torch/hub/checkpoints/weights-inception-2015-12-05-6726825d.pth
 Downloading: "https://download.pytorch.org/models/vgg16-397923af.pth" to /root/.cache/torch/hub/checkpoints/vgg16-397923af.pth
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 145, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 128, in main
+    result["class_accuracy"] = class_accuracy(samples, labels, device)
+                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 64, in class_accuracy
+    clf = load_classifier(device)
+  File "/kaggle/input/datasets/simran2200/dit-cifar10-src/src/dit/evaluate.py", line 58, in load_classifier
+    model = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True, verbose=False)
+  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 661, in load
+    repo_or_dir = _get_cache_or_reload(
+        repo_or_dir,
+    ...<3 lines>...
+        skip_validation=skip_validation,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 291, in _get_cache_or_reload
+    _check_repo_is_trusted(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        repo_owner,
+        ^^^^^^^^^^^
+    ...<2 lines>...
+        trust_repo=trust_repo,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/torch/hub.py", line 376, in _check_repo_is_trusted
+    response = input(
+        f"The repository {owner_name} does not belong to the list of trusted repositories and as such cannot be downloaded. "
+        "Do you trust this repository and wish to add it to the trusted list of repositories (y/N)?"
+    )
+EOFError: EOF when reading a line

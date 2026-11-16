@@ -55,7 +55,7 @@ def fidelity_metrics(samples, real, cache_dir, prc_subset=10_000, seed=0):
 
 
 def load_classifier(device):
-    model = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True, verbose=False)
+    model = torch.hub.load("chenyaofo/pytorch-cifar-models", "cifar10_resnet56", pretrained=True, verbose=False, trust_repo=True)
     return model.to(device).eval()
 
 
