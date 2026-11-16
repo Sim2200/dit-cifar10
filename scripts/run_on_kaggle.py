@@ -16,6 +16,7 @@ Account selection: KAGGLE_API_TOKEN=$(cat ~/.kaggle-2/access_token) for the seco
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import shutil
 import subprocess
@@ -69,7 +70,7 @@ def push_kernel(user: str, src_slug: str, experiment: str, run: str = "") -> str
         d = Path(tmp)
         text = (ROOT / "kaggle" / script).read_text()
         head, _, rest = text.partition("\nCONFIG = ")
-        default_cfg = json.loads(rest[: rest.index("\n")])
+        default_cfg = ast.literal_eval(rest[: rest.index("\n")])
         sources = []
         if experiment == "train":
             cfg = dict(run=run, **TRAIN_RUNS[run])
@@ -82,7 +83,7 @@ def push_kernel(user: str, src_slug: str, experiment: str, run: str = "") -> str
         else:
             cfg = None
         if cfg is not None:
-            text = head + "\nCONFIG = " + json.dumps(cfg) + rest[rest.index("\n"):]
+            text = head + "\nCONFIG = " + repr(cfg) + rest[rest.index("\n"):]
         (d / script).write_text(text)
         (d / "kernel-metadata.json").write_text(json.dumps({
             "id": kid, "title": kid.split("/")[1], "code_file": script, "language": "python",
