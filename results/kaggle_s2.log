@@ -1,0 +1,43 @@
+$ /usr/bin/python3 -m torch.distributed.run --nproc_per_node 2 -m dit.train --model DiT-S/2 --data /kaggle/working/data --out /kaggle/working/checkpoints/s2 --steps 100000 --batch 128 --precision fp16 --log-every 100 --ckpt-every 5000 --keep 2 --workers 4 --max-hours 10.5
+resumed from /kaggle/working/checkpoints/s2/step_0097825.pt at step 97825
+DiT-S/2: 32.5M params, world=2, micro-batch=64, precision=fp16
+step 97900 loss 0.0347 mse 0.0304 vb 0.0043 342.1 img/s 4.46 GB
+step 98000 loss 0.0344 mse 0.0298 vb 0.0045 416.2 img/s 4.46 GB
+step 98100 loss 0.0326 mse 0.0289 vb 0.0036 386.1 img/s 4.46 GB
+step 98200 loss 0.0339 mse 0.0298 vb 0.0041 360.9 img/s 4.46 GB
+step 98300 loss 0.0349 mse 0.0308 vb 0.0041 369.9 img/s 4.46 GB
+step 98400 loss 0.0336 mse 0.0289 vb 0.0047 366.8 img/s 4.46 GB
+step 98500 loss 0.0356 mse 0.0306 vb 0.0050 367.8 img/s 4.46 GB
+step 98600 loss 0.0305 mse 0.0287 vb 0.0019 367.2 img/s 4.46 GB
+step 98700 loss 0.0337 mse 0.0299 vb 0.0038 367.1 img/s 4.46 GB
+step 98800 loss 0.0338 mse 0.0289 vb 0.0049 367.6 img/s 4.46 GB
+step 98900 loss 0.0316 mse 0.0284 vb 0.0031 368.6 img/s 4.46 GB
+step 99000 loss 0.0318 mse 0.0287 vb 0.0031 368.1 img/s 4.46 GB
+step 99100 loss 0.0315 mse 0.0287 vb 0.0028 369.9 img/s 4.46 GB
+step 99200 loss 0.0322 mse 0.0284 vb 0.0038 370.1 img/s 4.46 GB
+step 99300 loss 0.0337 mse 0.0300 vb 0.0038 370.1 img/s 4.46 GB
+step 99400 loss 0.0328 mse 0.0298 vb 0.0030 369.2 img/s 4.46 GB
+step 99500 loss 0.0323 mse 0.0295 vb 0.0027 368.2 img/s 4.46 GB
+step 99600 loss 0.0320 mse 0.0294 vb 0.0026 366.6 img/s 4.46 GB
+step 99700 loss 0.0337 mse 0.0299 vb 0.0038 367.8 img/s 4.46 GB
+step 99800 loss 0.0341 mse 0.0305 vb 0.0036 368.2 img/s 4.46 GB
+step 99900 loss 0.0331 mse 0.0290 vb 0.0041 370.6 img/s 4.46 GB
+step 100000 loss 0.0317 mse 0.0286 vb 0.0031 369.3 img/s 4.46 GB
+{
+ "config": {
+  "run": "s2",
+  "model": "DiT-S/2",
+  "gpus": 2,
+  "steps": 100000,
+  "batch": 128,
+  "precision": "fp16",
+  "max_hours": 10.5,
+  "ckpt_every": 5000
+ },
+ "start_step": 97825,
+ "end_step": 100000,
+ "finished": true,
+ "exit_code": 0,
+ "session_hours": 0.25,
+ "checkpoint": "step_0100000.pt"
+}
