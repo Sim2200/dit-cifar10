@@ -7,3 +7,6 @@ checkpoints/
 *.pth
 .pytest_cache/
 .DS_Store
+kaggle/out/
+samples/
+cache/
