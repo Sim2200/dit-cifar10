@@ -2,7 +2,7 @@
 
 Diffusion Transformer (DiT, Peebles and Xie 2023) implemented from scratch in PyTorch and trained class-conditionally on CIFAR-10, to test three of the paper's claims at small scale and to measure how far sampling can be cut before quality breaks.
 
-Status: model, diffusion math, samplers, EMA and trainer are written and unit-tested on CPU. No training has run yet; there are no results.
+Status: DiT-S/4 trained and evaluated on Kaggle T4s (below). DiT-S/2 and DiT-B/4 are in progress. Every number here is measured by the code in this repo; raw outputs are in `results/`.
 
 ## Questions
 
@@ -20,6 +20,33 @@ Status: model, diffusion math, samplers, EMA and trainer are written and unit-te
 | DiT-B/4 | 12 | 768 | 12 | 4 | 64 | 129.6M | 5.56 |
 
 Counts from `dit.model.count_params` and `dit.model.forward_gflops`, within 3% and 10% of the paper's table (the paper's models take 4-channel latents; ours take 3-channel pixels).
+
+## Results so far: DiT-S/4, 100k steps, batch 128, 4.7 h on one T4
+
+FID and Inception Score on 10k samples against CIFAR-10 train statistics; precision/recall (k=3) against a fixed 10k train subset; class accuracy from a pretrained CIFAR-10 ResNet-56; seconds per image measured on one T4 in fp16 at batch 500.
+
+| Sampler | Steps | CFG | FID | IS | Precision | Recall | Class acc | s/img |
+|---|---|---|---|---|---|---|---|---|
+| DDPM | 1000 | 1.0 | 31.6 | 6.74 | 0.80 | 0.27 | 0.50 | 0.381 |
+| DDIM | 250 | 1.0 | 33.6 | 6.75 | 0.78 | 0.28 | 0.49 | 0.096 |
+| DDIM | 50 | 1.0 | 37.0 | 6.62 | 0.82 | 0.22 | 0.46 | 0.019 |
+| DDIM | 10 | 1.0 | 51.0 | 6.33 | 0.94 | 0.06 | 0.39 | 0.0040 |
+| DDIM | 4 | 1.0 | 100.7 | 4.92 | 0.99 | 0.00 | 0.24 | 0.0016 |
+| DPM-Solver++ | 50 | 1.0 | 37.8 | 6.65 | 0.78 | 0.27 | 0.47 | 0.019 |
+| DPM-Solver++ | 10 | 1.0 | 44.6 | 6.56 | 0.88 | 0.11 | 0.40 | 0.0039 |
+| DPM-Solver++ | 4 | 1.0 | 73.2 | 5.47 | 0.99 | 0.00 | 0.27 | 0.0016 |
+| DDIM | 50 | 1.5 | 29.2 | 7.38 | 0.83 | 0.23 | 0.66 | 0.038 |
+| DDIM | 50 | 2.0 | **25.9** | 7.87 | 0.85 | 0.22 | 0.78 | 0.038 |
+| DDIM | 50 | 4.0 | 33.4 | 8.24 | 0.84 | 0.10 | **0.91** | 0.038 |
+
+What the smallest model already shows:
+
+- Sampling can be cut 20x (DDPM 1000 to DDIM 50) for 5 FID points; at 10 steps DPM-Solver++ beats DDIM by 6 FID points; at 4 steps both collapse to near-zero recall.
+- Guidance at scale 2 is the best FID (25.9, from 37.0) and lifts class accuracy from 46% to 78%; scale 4 pushes accuracy to 91% at the cost of FID and recall, the usual fidelity-diversity trade.
+- Memorisation check: nearest-training-neighbour distance in Inception space, median 14.0 for generated vs 11.8 for real test images (1st percentile 9.3 vs 6.0), so samples are not closer to the training set than real held-out images are.
+- FID 31.6 is far from the U-Net's published 3.17: S/4 is 1.4 Gflops per forward and this run is about 3% of the paper's training compute. The scaling runs (S/2 at 4.3x the compute, B/4 at 4x) are what tests whether quality follows compute.
+
+Figures: `results/figures/loss_curves.png`, `sampler_fid_vs_seconds.png`, `guidance_sweep.png`; sample grids per setting in `results/figures/samples/`.
 
 ## Layout
 
