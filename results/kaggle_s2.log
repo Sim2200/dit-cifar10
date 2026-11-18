@@ -1,43 +1,58 @@
-$ /usr/bin/python3 -m torch.distributed.run --nproc_per_node 2 -m dit.train --model DiT-S/2 --data /kaggle/working/data --out /kaggle/working/checkpoints/s2 --steps 100000 --batch 128 --precision fp16 --log-every 100 --ckpt-every 5000 --keep 2 --workers 4 --max-hours 10.5
-resumed from /kaggle/working/checkpoints/s2/step_0097825.pt at step 97825
-DiT-S/2: 32.5M params, world=2, micro-batch=64, precision=fp16
-step 97900 loss 0.0347 mse 0.0304 vb 0.0043 342.1 img/s 4.46 GB
-step 98000 loss 0.0344 mse 0.0298 vb 0.0045 416.2 img/s 4.46 GB
-step 98100 loss 0.0326 mse 0.0289 vb 0.0036 386.1 img/s 4.46 GB
-step 98200 loss 0.0339 mse 0.0298 vb 0.0041 360.9 img/s 4.46 GB
-step 98300 loss 0.0349 mse 0.0308 vb 0.0041 369.9 img/s 4.46 GB
-step 98400 loss 0.0336 mse 0.0289 vb 0.0047 366.8 img/s 4.46 GB
-step 98500 loss 0.0356 mse 0.0306 vb 0.0050 367.8 img/s 4.46 GB
-step 98600 loss 0.0305 mse 0.0287 vb 0.0019 367.2 img/s 4.46 GB
-step 98700 loss 0.0337 mse 0.0299 vb 0.0038 367.1 img/s 4.46 GB
-step 98800 loss 0.0338 mse 0.0289 vb 0.0049 367.6 img/s 4.46 GB
-step 98900 loss 0.0316 mse 0.0284 vb 0.0031 368.6 img/s 4.46 GB
-step 99000 loss 0.0318 mse 0.0287 vb 0.0031 368.1 img/s 4.46 GB
-step 99100 loss 0.0315 mse 0.0287 vb 0.0028 369.9 img/s 4.46 GB
-step 99200 loss 0.0322 mse 0.0284 vb 0.0038 370.1 img/s 4.46 GB
-step 99300 loss 0.0337 mse 0.0300 vb 0.0038 370.1 img/s 4.46 GB
-step 99400 loss 0.0328 mse 0.0298 vb 0.0030 369.2 img/s 4.46 GB
-step 99500 loss 0.0323 mse 0.0295 vb 0.0027 368.2 img/s 4.46 GB
-step 99600 loss 0.0320 mse 0.0294 vb 0.0026 366.6 img/s 4.46 GB
-step 99700 loss 0.0337 mse 0.0299 vb 0.0038 367.8 img/s 4.46 GB
-step 99800 loss 0.0341 mse 0.0305 vb 0.0036 368.2 img/s 4.46 GB
-step 99900 loss 0.0331 mse 0.0290 vb 0.0041 370.6 img/s 4.46 GB
-step 100000 loss 0.0317 mse 0.0286 vb 0.0031 369.3 img/s 4.46 GB
-{
- "config": {
-  "run": "s2",
-  "model": "DiT-S/2",
-  "gpus": 2,
-  "steps": 100000,
-  "batch": 128,
-  "precision": "fp16",
-  "max_hours": 10.5,
-  "ckpt_every": 5000
- },
- "start_step": 97825,
- "end_step": 100000,
- "finished": true,
- "exit_code": 0,
- "session_hours": 0.25,
- "checkpoint": "step_0100000.pt"
-}
+  -> exit 0 in 5 s
+checkpoint: /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddpm --steps 1000 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddpm1000_cfg1.0.npz
+  -> exit 0 in 21955 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddpm1000_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddpm1000_cfg1.0.json
+  -> exit 0 in 3729 s
+{"fid": 20.182084342390624, "inception_score": 7.454144353935189, "precision": 0.7588000297546387, "recall": 0.40880000591278076, "s_per_img": 2.194082714783518, "setting": "s2_ddpm1000_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 250 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim250_cfg1.0.npz
+  -> exit 0 in 5474 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim250_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim250_cfg1.0.json
+  -> exit 0 in 170 s
+{"fid": 22.49403310166099, "inception_score": 7.516461980493642, "precision": 0.7487999796867371, "recall": 0.4092999994754791, "s_per_img": 0.5467252103654962, "setting": "s2_ddim250_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim50_cfg1.0.npz
+  -> exit 0 in 1105 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim50_cfg1.0.json
+  -> exit 0 in 170 s
+{"fid": 25.87413832034798, "inception_score": 7.346452169813745, "precision": 0.7886000275611877, "recall": 0.3418999910354614, "s_per_img": 0.10966903124357524, "setting": "s2_ddim50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim10_cfg1.0.npz
+  -> exit 0 in 227 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim10_cfg1.0.json
+  -> exit 0 in 168 s
+{"fid": 36.762230139616236, "inception_score": 6.849495609486617, "precision": 0.9276000261306763, "recall": 0.07959999889135361, "s_per_img": 0.022021695212314004, "setting": "s2_ddim10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim4_cfg1.0.npz
+  -> exit 0 in 95 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim4_cfg1.0.json
+  -> exit 0 in 169 s
+{"fid": 90.57160376529316, "inception_score": 5.383711078410139, "precision": 0.9901999831199646, "recall": 0.0010000000474974513, "s_per_img": 0.008884376199621903, "setting": "s2_ddim4_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler dpmpp --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_dpmpp50_cfg1.0.npz
+  -> exit 0 in 1117 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_dpmpp50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_dpmpp50_cfg1.0.json
+  -> exit 0 in 167 s
+{"fid": 27.34357985158266, "inception_score": 7.370350414603486, "precision": 0.7364000082015991, "recall": 0.39469999074935913, "s_per_img": 0.10934263364892256, "setting": "s2_dpmpp50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler dpmpp --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_dpmpp10_cfg1.0.npz
+  -> exit 0 in 231 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_dpmpp10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_dpmpp10_cfg1.0.json
+  -> exit 0 in 165 s
+{"fid": 33.74703552796524, "inception_score": 7.197081407579725, "precision": 0.8496999740600586, "recall": 0.1703999936580658, "s_per_img": 0.0220164189589651, "setting": "s2_dpmpp10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler dpmpp --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_dpmpp4_cfg1.0.npz
+  -> exit 0 in 98 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_dpmpp4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_dpmpp4_cfg1.0.json
+  -> exit 0 in 165 s
+{"fid": 63.54523977053367, "inception_score": 5.981028469112023, "precision": 0.9778000116348267, "recall": 0.005200000014156103, "s_per_img": 0.008872960366700825, "setting": "s2_dpmpp4_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 50 --cfg 1.5 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim50_cfg1.5.npz
+  -> exit 0 in 2223 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim50_cfg1.5.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim50_cfg1.5.json
+  -> exit 0 in 166 s
+{"fid": 18.06348126729779, "inception_score": 8.077843750501742, "precision": 0.8127999901771545, "recall": 0.32829999923706055, "s_per_img": 0.22157249864779022, "setting": "s2_ddim50_cfg1.5"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 50 --cfg 2.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim50_cfg2.0.npz
+  -> exit 0 in 2224 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim50_cfg2.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim50_cfg2.0.json
+  -> exit 0 in 167 s
+{"fid": 16.332456538364454, "inception_score": 8.48674381392734, "precision": 0.8227999806404114, "recall": 0.29440000653266907, "s_per_img": 0.2216891851676138, "setting": "s2_ddim50_cfg2.0"}
+$ /usr/bin/python3 -m dit.sample --ckpt /kaggle/input/notebooks/simrankharbanda22/dit-cifar10-train-s2/checkpoints/s2/step_0100000.pt --sampler ddim --steps 50 --cfg 4.0 --n 10000 --batch 500 --out /kaggle/working/samples/s2_ddim50_cfg4.0.npz
+  -> exit 0 in 2219 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/s2_ddim50_cfg4.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_s2_ddim50_cfg4.0.json
+  -> exit 0 in 167 s
+{"fid": 28.596087116554713, "inception_score": 8.353899634262955, "precision": 0.7749000191688538, "recall": 0.1459999978542328, "s_per_img": 0.2212082970267848, "setting": "s2_ddim50_cfg4.0"}
+done in 706.3 min
