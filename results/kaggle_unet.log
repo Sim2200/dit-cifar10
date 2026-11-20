@@ -1,0 +1,42 @@
+  -> exit 0 in 7 s
+$ /usr/bin/python3 -m dit.sample --unet --sampler ddpm --steps 1000 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_ddpm1000_cfg1.0.npz
+  -> exit 0 in 16009 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_ddpm1000_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_ddpm1000_cfg1.0.json
+  -> exit 0 in 2316 s
+{"fid": 12.783993512944107, "inception_score": 8.429085751848337, "precision": 0.7764000296592712, "recall": 0.47929999232292175, "s_per_img": 1.5930285449529948, "setting": "unet_ddpm1000_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler ddim --steps 250 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_ddim250_cfg1.0.npz
+  -> exit 0 in 4003 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_ddim250_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_ddim250_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 14.332527970763351, "inception_score": 8.551778864780186, "precision": 0.7712000012397766, "recall": 0.47209998965263367, "s_per_img": 0.3987374709279914, "setting": "unet_ddim250_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler ddim --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_ddim50_cfg1.0.npz
+  -> exit 0 in 813 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_ddim50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_ddim50_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 16.863037437382957, "inception_score": 8.276947854872628, "precision": 0.803600013256073, "recall": 0.4189999997615814, "s_per_img": 0.07972826972760652, "setting": "unet_ddim50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler ddim --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_ddim10_cfg1.0.npz
+  -> exit 0 in 175 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_ddim10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_ddim10_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 39.96027836033386, "inception_score": 6.970042945011284, "precision": 0.9305999875068665, "recall": 0.09610000252723694, "s_per_img": 0.016003809627733734, "setting": "unet_ddim10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler ddim --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_ddim4_cfg1.0.npz
+  -> exit 0 in 79 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_ddim4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_ddim4_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 163.89874060752936, "inception_score": 3.085753207667489, "precision": 0.9937999844551086, "recall": 0.002099999925121665, "s_per_img": 0.006441395107068514, "setting": "unet_ddim4_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler dpmpp --steps 50 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_dpmpp50_cfg1.0.npz
+  -> exit 0 in 812 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_dpmpp50_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_dpmpp50_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 16.16707983684188, "inception_score": 8.400865127515882, "precision": 0.7445999979972839, "recall": 0.4830000102519989, "s_per_img": 0.07964902744795146, "setting": "unet_dpmpp50_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler dpmpp --steps 10 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_dpmpp10_cfg1.0.npz
+  -> exit 0 in 175 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_dpmpp10_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_dpmpp10_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 25.823950408159817, "inception_score": 7.8132416774732265, "precision": 0.8467000126838684, "recall": 0.2142000049352646, "s_per_img": 0.015985291982951916, "setting": "unet_dpmpp10_cfg1.0"}
+$ /usr/bin/python3 -m dit.sample --unet --sampler dpmpp --steps 4 --cfg 1.0 --n 10000 --batch 500 --out /kaggle/working/samples/unet_dpmpp4_cfg1.0.npz
+  -> exit 0 in 79 s
+$ /usr/bin/python3 -m dit.evaluate /kaggle/working/samples/unet_dpmpp4_cfg1.0.npz --data /kaggle/working/data --cache /kaggle/working/cache --out /kaggle/working/results/eval_unet_dpmpp4_cfg1.0.json
+  -> exit 0 in 131 s
+{"fid": 78.31213959945791, "inception_score": 5.441503661465328, "precision": 0.9839000105857849, "recall": 0.010900000110268593, "s_per_img": 0.006432390765139931, "setting": "unet_dpmpp4_cfg1.0"}
+done in 423.1 min
